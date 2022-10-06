@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using System.IO;
 using UnityEditor;
 using UnityEngine.EventSystems;
+using TMPro;
 
 namespace FreeDraw
 {
@@ -29,7 +30,7 @@ namespace FreeDraw
 
         public LayerMask Drawing_Layers;
         public GameObject resetobjet;
-        public Dropdown INPUTNAME;
+        public TMP_Dropdown INPUTNAME;
         public Button currenttrial;
      
         public bool Reset_Canvas_On_Play = true;
@@ -310,7 +311,7 @@ namespace FreeDraw
             File.WriteAllBytes(Application.persistentDataPath +INPUTNAME.options[INPUTNAME.value].text+"-"+ trialnumber.ToString() + ".png", itemBGBytes);
             ResetCanvas();
         
-            currenttrial.GetComponentInChildren<Text>().text = "Trial "+trialnumber.ToString()+"/122" ;
+            currenttrial.GetComponentInChildren<TextMeshProUGUI>().text = "Trial "+trialnumber.ToString()+"/122" ;
         }
         
         public void quitapp()
