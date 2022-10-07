@@ -310,8 +310,8 @@ namespace FreeDraw
             byte[] itemBGBytes = drawable_texture.EncodeToPNG();
             File.WriteAllBytes(Application.persistentDataPath +INPUTNAME.options[INPUTNAME.value].text+"-"+ (trialnumber-1).ToString() + ".png", itemBGBytes);
             ResetCanvas();
- 
-            currenttrial.text = trialnumber + "/82";
+
+            currenttrial.text = "Trial " + trialnumber;// + "/82";
         }
         
         public void quitapp()
