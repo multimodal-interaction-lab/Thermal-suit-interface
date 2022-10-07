@@ -31,7 +31,7 @@ namespace FreeDraw
         public LayerMask Drawing_Layers;
         public GameObject resetobjet;
         public TMP_Dropdown INPUTNAME;
-        public Button currenttrial;
+        public TextMeshProUGUI currenttrial;
      
         public bool Reset_Canvas_On_Play = true;
         // The colour the canvas is reset to each time
@@ -311,7 +311,7 @@ namespace FreeDraw
             File.WriteAllBytes(Application.persistentDataPath +INPUTNAME.options[INPUTNAME.value].text+"-"+ (trialnumber-1).ToString() + ".png", itemBGBytes);
             ResetCanvas();
  
-            currenttrial.GetComponentInChildren<TextMeshProUGUI>().text = "Trial: "+"<b>"+trialnumber.ToString()+"</b>"+"/82" ;
+            currenttrial.text = trialnumber + "/82";
         }
         
         public void quitapp()

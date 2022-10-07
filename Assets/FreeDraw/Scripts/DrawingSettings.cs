@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,13 @@ namespace FreeDraw
     {
         public static bool isCursorOverUI = false;
         public float Transparency = 1f;
+        public float PenSize = 16f;
+        public float EraserSize = 64f;
+
+        private void Start()
+        {
+            SetMarkerRed();
+        }
 
         // Changing pen settings is easy as changing the static properties Drawable.Pen_Colour and Drawable.Pen_Width
         public void SetMarkerColour(Color new_color)
@@ -40,25 +48,29 @@ namespace FreeDraw
         {
             Color c = Color.red;
             c.a = Transparency;
-            SetMarkerColour(c);
             Drawable.drawable.SetPenBrush();
+            SetMarkerWidth(PenSize);
+            SetMarkerColour(c);
         }
         public void SetMarkerGreen()
         {
             Color c = Color.green;
             c.a = Transparency;
-            SetMarkerColour(c);
             Drawable.drawable.SetPenBrush();
+            SetMarkerWidth(PenSize);
+            SetMarkerColour(c);
         }
         public void SetMarkerBlue()
         {
             Color c = Color.blue;
             c.a = Transparency;
-            SetMarkerColour(c);
             Drawable.drawable.SetPenBrush();
+            SetMarkerWidth(PenSize);
+            SetMarkerColour(c);
         }
         public void SetEraser()
         {
+            SetMarkerWidth(EraserSize);
             SetMarkerColour(new Color(255f, 255f, 255f, 0f));
         }
 
