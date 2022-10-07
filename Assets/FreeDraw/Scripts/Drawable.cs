@@ -308,10 +308,10 @@ namespace FreeDraw
         {
             trialnumber += 1;
             byte[] itemBGBytes = drawable_texture.EncodeToPNG();
-            File.WriteAllBytes(Application.persistentDataPath +INPUTNAME.options[INPUTNAME.value].text+"-"+ trialnumber.ToString() + ".png", itemBGBytes);
+            File.WriteAllBytes(Application.persistentDataPath +INPUTNAME.options[INPUTNAME.value].text+"-"+ (trialnumber-1).ToString() + ".png", itemBGBytes);
             ResetCanvas();
-        
-            currenttrial.GetComponentInChildren<TextMeshProUGUI>().text = "Trial "+trialnumber.ToString()+"/122" ;
+ 
+            currenttrial.GetComponentInChildren<TextMeshProUGUI>().text = "Trial: "+"<b>"+trialnumber.ToString()+"</b>"+"/82" ;
         }
         
         public void quitapp()
