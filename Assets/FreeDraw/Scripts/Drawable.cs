@@ -51,6 +51,8 @@ namespace FreeDraw
         bool no_drawing_on_current_drag = false;
         public int trialnumber = 0;
 
+        // Altered: track where stroke starts
+        Vector2 stroke_start_position;
 
         //////////////////////////////////////////////////////////////////////////////
         // BRUSH TYPES. Implement your own here
@@ -145,6 +147,8 @@ namespace FreeDraw
         // Detects when user is left clicking, which then call the appropriate function
         void Update()
         {
+
+
             // Is the user holding down the left mouse button?
             bool mouse_held_down = Input.GetMouseButton(0);
             if (mouse_held_down && !no_drawing_on_current_drag)
@@ -182,22 +186,33 @@ namespace FreeDraw
             }
         }
 
+        // Altered from source: When Mouse is pressed, track start of stroke
+        private void OnMouseDown()
+        {
+            stroke_start_position = WorldToPixelCoordinates(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        }
+
 
         // Altered from source: When Mouse is released, try to fill in the drawn shape
         private void OnMouseUp()
         {
-            Debug.Log("Called");
-            FillShape(Pen_Colour);
+            Vector2 mouse_world_position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 end_stroke_position = WorldToPixelCoordinates(mouse_world_position);
+            FillShape(stroke_start_position, end_stroke_position, Pen_Colour);
         }
 
         // Altered from source: rudimentary fill
-        private void FillShape(Color color)
+        private void FillShape(Vector2 start, Vector2 end, Color color)
         {
-            // For each row
-            // Finds the leftmost colored pixel and the rightmost colored pixel
-            // Then fills in the pixel in between the left and right
-            // There are issues if the shape isn't closed
+            // Close the gap between start and end points
+            ColourBetween(start, end, 3, color);
+            drawable_texture.SetPixels32(cur_colors);
+            drawable_texture.Apply();
 
+            
+            // For each row
+            // Find the leftmost colored pixel and the rightmost colored pixel
+            // Then fill in the pixel in between the left and right
             cur_colors = drawable_texture.GetPixels32();
             int num_rows = cur_colors.Length / (int)drawable_sprite.rect.width;
 
@@ -241,6 +256,7 @@ namespace FreeDraw
 
             drawable_texture.SetPixels32(cur_colors);
             drawable_texture.Apply();
+            
         }
 
 
