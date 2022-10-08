@@ -32,7 +32,7 @@ namespace FreeDraw
         public GameObject resetobjet;
         public TMP_Dropdown INPUTNAME;
         public TextMeshProUGUI currenttrial;
-     
+
         public bool Reset_Canvas_On_Play = true;
         // The colour the canvas is reset to each time
         public Color Reset_Colour = new Color(0, 0, 0, 0);  // By default, reset the canvas to be transparent
@@ -52,8 +52,8 @@ namespace FreeDraw
         public int trialnumber = 0;
 
 
-//////////////////////////////////////////////////////////////////////////////
-// BRUSH TYPES. Implement your own here
+        //////////////////////////////////////////////////////////////////////////////
+        // BRUSH TYPES. Implement your own here
 
 
         // When you want to make your own type of brush effects,
@@ -93,14 +93,14 @@ namespace FreeDraw
             // 3. Actually apply the changes we marked earlier
             // Done here to be more efficient
             ApplyMarkedPixelChanges();
-            
+
             // 4. If dragging, update where we were previously
             previous_drag_position = pixel_pos;
         }
 
 
 
-        
+
         // Default brush type. Has width and colour.
         // Pass in a point in WORLD coordinates
         // Changes the surrounding pixels of the world_point to the static pen_colour
@@ -134,7 +134,7 @@ namespace FreeDraw
             // PenBrush is the NAME of the method we want to set as our current brush
             current_brush = PenBrush;
         }
-//////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -178,10 +178,70 @@ namespace FreeDraw
             {
                 previous_drag_position = Vector2.zero;
                 no_drawing_on_current_drag = false;
+
             }
-            mouse_was_previously_held_down = mouse_held_down;
         }
 
+
+        // Altered from source: When Mouse is released, try to fill in the drawn shape
+        private void OnMouseUp()
+        {
+            Debug.Log("Called");
+            FillShape(Pen_Colour);
+        }
+
+        // Altered from source: rudimentary fill
+        private void FillShape(Color color)
+        {
+            // For each row
+            // Finds the leftmost colored pixel and the rightmost colored pixel
+            // Then fills in the pixel in between the left and right
+            // There are issues if the shape isn't closed
+
+            cur_colors = drawable_texture.GetPixels32();
+            int num_rows = cur_colors.Length / (int)drawable_sprite.rect.width;
+
+            for (int y = 0; y < num_rows; y++) { // iterate over rows
+
+                int leftmost = -1;
+                int rightmost = -1;
+                int array_pos;
+
+                // Search for left most color pixel that matches
+                for (int x = 0; x < (int)drawable_sprite.rect.width; x++)                   
+                {
+                    array_pos =  y * (int)drawable_sprite.rect.width + x;
+                    if (cur_colors[array_pos] == color)
+                    {
+                        leftmost = x;
+                        break;
+                    }
+                }
+
+                // Search for right most color pixel that matches
+                for (int x = (int)drawable_sprite.rect.width - 1; x >= 0; x--)                  
+                {
+                    array_pos = y * (int)drawable_sprite.rect.width + x;
+                    if (cur_colors[array_pos] == color)
+                    {
+                        rightmost = x;
+                        break;
+                    }
+                }
+
+                // Fill in between leftmost and rightmost
+                for(int x = leftmost; x < rightmost; x++)
+                {
+                    array_pos = y * (int)drawable_sprite.rect.width + x;
+                    cur_colors[array_pos] = color;
+                }
+
+
+            }
+
+            drawable_texture.SetPixels32(cur_colors);
+            drawable_texture.Apply();
+        }
 
 
         // Set the colour of pixels in a straight line from start_point all the way to end_point, to ensure everything inbetween is coloured
@@ -308,22 +368,22 @@ namespace FreeDraw
         {
             trialnumber += 1;
             byte[] itemBGBytes = drawable_texture.EncodeToPNG();
-            File.WriteAllBytes(Application.persistentDataPath +INPUTNAME.options[INPUTNAME.value].text+"-"+ (trialnumber-1).ToString() + ".png", itemBGBytes);
+            File.WriteAllBytes(Application.persistentDataPath + INPUTNAME.options[INPUTNAME.value].text + "-" + (trialnumber - 1).ToString() + ".png", itemBGBytes);
             ResetCanvas();
 
             currenttrial.text = "Trial " + trialnumber;// + "/82";
         }
-        
+
         public void quitapp()
         {
             Application.Quit();
         }
 
 
-/*        void Start()
-        {
-            Debug.Log(Application.persistentDataPath);
-        }*/
+        /*        void Start()
+                {
+                    Debug.Log(Application.persistentDataPath);
+                }*/
 
         void Awake()
         {
