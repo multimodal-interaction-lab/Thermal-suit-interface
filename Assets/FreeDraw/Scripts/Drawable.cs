@@ -5,6 +5,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine.EventSystems;
 using TMPro;
+using System;
 
 namespace FreeDraw
 {
@@ -32,6 +33,18 @@ namespace FreeDraw
         public GameObject resetobjet;
         public TMP_Dropdown INPUTNAME;
         public TextMeshProUGUI currenttrial;
+        //public ArrayList arrowList = new ArrayList(4);
+        public GameObject[] arrows;
+        public Image arrow1;
+        public Image arrow2;
+        public Image arrow3;
+        public Image arrow4;
+        ArrayList row_pattern = new ArrayList() { 1,2,3,4};
+        ArrayList used = new ArrayList();
+
+     
+
+
 
         public bool Reset_Canvas_On_Play = true;
         // The colour the canvas is reset to each time
@@ -383,12 +396,56 @@ namespace FreeDraw
         public void Savepng()
         {
             trialnumber += 1;
+
+            if (trialnumber == 1 || trialnumber == 11 || trialnumber == 21 || trialnumber == 31)
+            {
+                rowpattern();
+            }
+
+                for (int y = 0; y < drawable_texture.height; y++)
+            {
+                for (int x = 0; x < drawable_texture.width; x++)
+                {
+                    if (drawable_texture.GetPixel(x, y) != Color.red)
+                    {
+                        drawable_texture.SetPixel(x, y, Color.white);
+                    }
+                  
+                }
+            }
+            drawable_texture.Apply();
             byte[] itemBGBytes = drawable_texture.EncodeToPNG();
             File.WriteAllBytes(Application.persistentDataPath + INPUTNAME.options[INPUTNAME.value].text + "-" + (trialnumber - 1).ToString() + ".png", itemBGBytes);
             ResetCanvas();
 
             currenttrial.text = "Trial " + trialnumber;// + "/82";
         }
+
+        public void rowpattern()
+        {
+           foreach (var i in arrows)
+            {
+                i.SetActive(false);
+            }
+            System.Random random = new System.Random();
+            int start2 = random.Next(0, row_pattern.Count);
+            
+
+            /*foreach (var i in row_pattern)
+            {
+                Debug.Log(i);
+            }*/
+            int row = (int) row_pattern[start2];
+            Debug.Log(row);
+            used.Add(row);
+            row_pattern.RemoveAt(start2);
+            
+            
+            
+            arrows[row-1].SetActive(true);
+                
+        }
+
 
         public void quitapp()
         {
@@ -403,6 +460,13 @@ namespace FreeDraw
 
         void Awake()
         {
+
+
+
+            arrow1.gameObject.SetActive(false);
+            arrow2.gameObject.SetActive(false);
+            arrow3.gameObject.SetActive(false);
+            arrow4.gameObject.SetActive(false);
             drawable = this;
             // DEFAULT BRUSH SET HERE
             current_brush = PenBrush;
